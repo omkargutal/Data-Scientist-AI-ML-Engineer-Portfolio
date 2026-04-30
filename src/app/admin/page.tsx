@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Database, Briefcase, GraduationCap, LineChart, Code2, 
@@ -29,13 +29,13 @@ export default function AdminPage() {
     setStatus({ type: 'loading', message: "Saving to database..." });
     
     const formData = new FormData(e.currentTarget);
-    const data: Record<string, any> = {};
+    const data: Record<string, string | string[]> = {};
     
     formData.forEach((value, key) => {
       if (key === 'tags' || key === 'impact' || key === 'description') {
         data[key] = value.toString().split(',').map(s => s.trim()).filter(s => s);
       } else {
-        data[key] = value;
+        data[key] = value.toString();
       }
     });
 
@@ -53,7 +53,8 @@ export default function AdminPage() {
         const err = await res.json();
         setStatus({ type: 'error', message: err.error || "Failed to add" });
       }
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       setStatus({ type: 'error', message: "Could not connect to API" });
     }
     
